@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
 // 模板类型定义
@@ -7,10 +7,21 @@ interface Template {
   id: string;
   name: string;
   category: string;
-  thumbnail?: string;
+  thumbnail: string;
+  description: string;
+  tags: string[];
 }
 
 const HomePage: React.FC = () => {
+  const navigate = useNavigate();
+  
+  // 添加模板点击处理函数
+  const handleTemplateClick = (templateId: string) => {
+    console.log(`选择了模板: ${templateId}`);
+    // 使用React Router导航而不是修改window.location
+    navigate(`/editor/${templateId}`);
+  };
+
   return (
     <div className="py-8">
       {/* 英雄区域 */}
@@ -115,7 +126,7 @@ const HomePage: React.FC = () => {
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
             >
-              精选<span className="neo-glow-text">模板</span>
+              精选<span className="neo-glow-text">网站</span>模板
             </motion.h2>
             <motion.p 
               className="text-xl text-neo-light/70 max-w-3xl mx-auto"
@@ -124,41 +135,67 @@ const HomePage: React.FC = () => {
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.2 }}
             >
-              从多种专业设计的模板中选择，快速启动您的项目
+              专业设计的网站模板，涵盖各行各业需求，快速建立您的在线形象
             </motion.p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {templates.map((template, index) => (
               <motion.div 
                 key={index}
-                className="group relative overflow-hidden rounded-lg bg-neo-darker/80 border border-neo-primary/20 hover:shadow-neo-glow transition-all duration-300"
+                className="group relative overflow-hidden rounded-lg bg-neo-darker/80 border border-neo-primary/20 hover:shadow-neo-glow transition-all duration-300 cursor-pointer"
                 initial={{ opacity: 0, scale: 0.9 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
+                onClick={() => handleTemplateClick(template.id)}
               >
-                <div className="aspect-w-16 aspect-h-9 bg-neo-primary/10">
-                  <div className="w-full h-full flex items-center justify-center text-neo-primary">
-                    {template.thumbnail ? (
-                      <img 
+                <div className="aspect-w-16 aspect-h-9 bg-neo-primary/5">
+                  <div className="w-full h-full overflow-hidden">
+                    <div className="w-full h-full flex items-center justify-center">
+                      <motion.img 
                         src={template.thumbnail} 
                         alt={template.name} 
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-cover filter brightness-90 group-hover:brightness-100 transition-all duration-300"
+                        initial={{ scale: 1 }}
+                        whileHover={{ scale: 1.05 }}
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.src = 'https://placehold.co/600x400/050914/0BEFF7?text=NeoGenesis';
+                        }}
                       />
-                    ) : (
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                      </svg>
-                    )}
+                    </div>
                   </div>
                 </div>
                 <div className="p-6">
-                  <h3 className="font-display font-medium text-lg mb-2">{template.name}</h3>
-                  <p className="text-neo-light/70 text-sm">{template.category}</p>
+                  <div className="flex justify-between items-start mb-2">
+                    <h3 className="font-display font-medium text-lg">{template.name}</h3>
+                    <span className="text-xs bg-neo-primary/20 text-neo-primary px-2 py-1 rounded-full">
+                      {template.category}
+                    </span>
+                  </div>
+                  <p className="text-neo-light/70 text-sm mb-3 line-clamp-2">{template.description}</p>
+                  <div className="flex flex-wrap gap-2">
+                    {template.tags.map((tag, tagIndex) => (
+                      <span 
+                        key={tagIndex} 
+                        className="px-2 py-1 text-xs bg-neo-primary/10 text-neo-primary/90 rounded-md"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
                 </div>
-                <div className="absolute inset-0 bg-neo-darker/90 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300">
-                  <Link to={`/templates/${template.id}`} className="neo-btn-primary">
+                <div className="absolute inset-0 bg-neo-darker/90 backdrop-blur-sm flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 p-6">
+                  <h3 className="font-display font-medium text-lg mb-4 text-center text-neo-primary">{template.name}</h3>
+                  <p className="text-neo-light/80 text-sm mb-6 text-center">{template.description}</p>
+                  <Link 
+                    to={`/editor/${template.id}`} 
+                    className="neo-btn-primary px-6 py-2"
+                    onClick={(e) => {
+                      e.stopPropagation(); // 防止触发父元素点击事件
+                    }}
+                  >
                     选择模板
                   </Link>
                 </div>
@@ -166,7 +203,7 @@ const HomePage: React.FC = () => {
             ))}
           </div>
           
-          <div className="text-center mt-12">
+          <div className="text-center mt-16">
             <Link to="/templates" className="neo-btn-outline px-8 py-3 text-lg">
               查看所有模板
             </Link>
@@ -276,9 +313,54 @@ const features = [
 
 // 示例模板数据
 const templates: Template[] = [
-  { id: '1', name: 'Neo企业官网', category: '商业网站' },
-  { id: '2', name: 'Flux作品集', category: '作品集' },
-  { id: '3', name: 'Pulse博客', category: '博客' },
+  { 
+    id: '1', 
+    name: 'Modern企业官网', 
+    category: '企业官网',
+    thumbnail: 'https://images.unsplash.com/photo-1487017159836-4e23a8290b1a?q=80&w=1471&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    description: '现代风格的企业官网模板，适合各类公司使用',
+    tags: ['企业', '商务', '响应式']
+  },
+  { 
+    id: '8', 
+    name: '房产中介服务', 
+    category: '房地产',
+    thumbnail: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    description: '房地产代理网站，展示房源与服务项目',
+    tags: ['房产', '中介', '展示']
+  },
+  { 
+    id: '4', 
+    name: 'Fashion电商', 
+    category: '电子商务',
+    thumbnail: 'https://images.unsplash.com/photo-1472851294608-062f824d29cc?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    description: '时尚服饰电商网站模板，提供流畅的购物体验',
+    tags: ['电商', '时尚', '购物']
+  },
+  { 
+    id: '11', 
+    name: '高级餐厅', 
+    category: '餐饮美食',
+    thumbnail: 'https://images.unsplash.com/photo-1590846406792-0adc7f938f1d?q=80&w=1385&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    description: '精致餐厅网站，展示菜品与预订服务',
+    tags: ['餐饮', '预订', '美食']
+  },
+  { 
+    id: '9', 
+    name: '旅行度假指南', 
+    category: '旅游酒店',
+    thumbnail: 'https://images.unsplash.com/photo-1476900543704-4312b78632f8?q=80&w=1374&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    description: '旅游景点与酒店预订网站，分享旅行体验',
+    tags: ['旅游', '度假', '预订']
+  },
+  { 
+    id: '12', 
+    name: '科技应用推广', 
+    category: '科技产品',
+    thumbnail: 'https://images.unsplash.com/photo-1535223289827-42f1e9919769?q=80&w=1374&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    description: '移动应用与软件产品展示网站',
+    tags: ['APP', '科技', '推广']
+  }
 ];
 
 export default HomePage; 
