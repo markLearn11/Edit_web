@@ -1,0 +1,93 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: 'Space Grotesk', 'Roboto', sans-serif;
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply bg-neo-dark text-neo-light min-h-screen;
+    background-image: radial-gradient(#1a2e4c 1px, transparent 1px);
+    background-size: 20px 20px;
+    background-position: center;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Orbitron', sans-serif;
+    @apply font-bold tracking-wide;
+  }
+}
+
+@layer components {
+  .neo-container {
+    @apply container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl;
+  }
+
+  .neo-btn {
+    @apply inline-flex items-center justify-center px-6 py-3 rounded-md 
+      transition-all duration-300 font-medium focus:outline-none focus:ring-2 
+      focus:ring-offset-2 focus:ring-offset-neo-dark;
+  }
+
+  .neo-btn-primary {
+    @apply neo-btn bg-neo-primary text-neo-dark hover:shadow-neo-glow 
+      focus:ring-neo-primary/50;
+  }
+
+  .neo-btn-secondary {
+    @apply neo-btn bg-neo-secondary text-neo-light hover:shadow-neo-glow 
+      focus:ring-neo-secondary/50;
+  }
+
+  .neo-btn-accent {
+    @apply neo-btn bg-neo-accent text-neo-light hover:shadow-neo-accent-glow 
+      focus:ring-neo-accent/50;
+  }
+
+  .neo-btn-outline {
+    @apply neo-btn bg-transparent border-2 border-neo-primary text-neo-primary 
+      hover:bg-neo-primary hover:text-neo-dark focus:ring-neo-primary/50;
+  }
+
+  .neo-card {
+    @apply rounded-lg p-6 bg-neo-darker/80 border border-neo-primary/20 
+      backdrop-blur-sm hover:shadow-neo-glow transition-shadow duration-300;
+  }
+
+  .neo-glow-text {
+    @apply text-neo-primary drop-shadow-[0_0_8px_rgba(11,239,247,0.7)];
+  }
+
+  .neo-gradient-text {
+    @apply text-transparent bg-clip-text bg-gradient-to-r from-neo-primary 
+      via-neo-secondary to-neo-accent animate-pulse-slow;
+  }
+
+  .neo-input {
+    @apply bg-neo-darker/80 border border-neo-primary/30 rounded-md px-4 py-2 
+      text-neo-light focus:outline-none focus:border-neo-primary/80 focus:ring-1 
+      focus:ring-neo-primary/50 transition-all duration-300;
+  }
+
+  .neo-grid-bg {
+    @apply relative;
+    background-image: radial-gradient(#1a2e4c 1px, transparent 1px);
+    background-size: 20px 20px;
+    background-position: center;
+  }
+
+  .neo-grid-bg::before {
+    content: '';
+    @apply absolute inset-0 bg-neo-gradient opacity-5 pointer-events-none;
+  }
+
+  .cursor-fx {
+    pointer-events: none;
+    mix-blend-mode: screen;
+    z-index: 9999;
+    @apply fixed w-5 h-5 bg-neo-primary/70 rounded-full -translate-x-1/2 -translate-y-1/2;
+  }
+} 
